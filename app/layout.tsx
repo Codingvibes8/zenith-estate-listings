@@ -1,6 +1,13 @@
 import type { Metadata } from "next";
+import React, {Suspense} from "react";
 import { Geist, Geist_Mono } from "next/font/google";
 import "./globals.css";
+import {
+  ClerkProvider,
+} from '@clerk/nextjs'
+import {ThemeProvider} from 'next-themes'
+import Loading from "./loading"
+import {Header} from "@/components/Header";
 
 const geistSans = Geist({
   variable: "--font-geist-sans",
@@ -23,12 +30,17 @@ export default function RootLayout({
   children: React.ReactNode;
 }>) {
   return (
-    <html lang="en">
-      <body
-        className={`${geistSans.variable} ${geistMono.variable} antialiased`}
-      >
-        {children}
-      </body>
-    </html>
+      <ClerkProvider>
+        <html lang="en"  suppressHydrationWarning>
+          <body
+            className={`${geistSans.variable} ${geistMono.variable} antialiased`}
+             >
+          <Header/>
+          <ThemeProvider attribute="class" defaultTheme="system" enableSystem>
+          <Suspense fallback={<Loading />}>{children}</Suspense>
+          </ThemeProvider>
+        </body>
+        </html>
+        </ClerkProvider>
   );
 }
